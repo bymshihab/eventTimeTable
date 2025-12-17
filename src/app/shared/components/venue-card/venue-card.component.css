@@ -3,25 +3,18 @@
   width: 200px;
   min-width: 200px;
   max-width: 200px;
-  height: 80px;
+  height: 40px;
   background-color: white;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  padding: 10px;
   transition: all 0.2s ease;
   cursor: pointer;
   flex-shrink: 0; /* Prevents shrinking in horizontal scroll */
 }
 
-.venue-card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border-color: #d1d5db;
-  transform: translateY(-1px);
-}
 
 .venue-name {
   font-size: 16px;

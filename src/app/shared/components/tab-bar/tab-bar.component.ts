@@ -80,25 +80,6 @@ export class TabBarComponent implements OnInit {
     }
   }
 
-  /**
-   * Get formatted date string for display
-   */
-  getFormattedDate(date: string): string {
-    const dateObj = new Date(date);
-    return dateObj.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
-    });
-  }
-
-  /**
-   * Check if a day is today
-   */
-  isToday(date: string): boolean {
-    const today = new Date();
-    const dayDate = new Date(date);
-    return today.toDateString() === dayDate.toDateString();
-  }
 
   /**
    * Get day abbreviation (first 3 characters)

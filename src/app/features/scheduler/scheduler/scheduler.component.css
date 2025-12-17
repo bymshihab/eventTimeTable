@@ -76,7 +76,7 @@
 
 .time-header {
   grid-row: 1;
-  height: 80px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,11 +87,11 @@
   z-index: 10;
 }
 
-.time-header-text {
+/* .time-header-text {
   font-size: 0.875rem;
   font-weight: 600;
   color: #6b7280;
-}
+} */
 
 .time-content {
   grid-row: 2;
@@ -111,7 +111,7 @@
 
 .venue-headers-container {
   grid-row: 1;
-  height: 80px;
+  height: 40px;
   background: white;
   border-bottom: 1px solid #e5e7eb;
   overflow-x: auto;
@@ -130,9 +130,11 @@
 .venue-header-wrapper {
   display: flex;
   align-items: center;
-  padding: 8px;
+  padding: 8px 0;
   flex-shrink: 0;
   height: 100%;
+  border-right: 1px solid #e5e7eb;
+  margin: 0;
 }
 
 /* Events Grid Container */
@@ -191,6 +193,9 @@
   display: flex;
   position: relative;
   z-index: 2;
+  margin: 0;
+  padding: 0;
+  gap: 0;
 }
 
 .venue-events-column {
@@ -198,6 +203,7 @@
   background: white;
   border-right: 1px solid #e5e7eb;
   flex-shrink: 0;
+  margin: 0;
 }
 
 /* Event Wrapper */
