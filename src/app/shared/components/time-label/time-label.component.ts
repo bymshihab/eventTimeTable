@@ -16,16 +16,14 @@ export interface TimeSlot {
   styleUrl: './time-label.component.css'
 })
 export class TimeLabelComponent implements OnInit, OnChanges {
-  @Input() startTime: string = '08:00';
-  @Input() endTime: string = '18:00';
+  @Input() startTime: string = '1:00';
+  @Input() endTime: string = '24:00';
   @Input() intervalMinutes: number = 15;
-  @Input() rowHeight: number = 60; // Height of each time slot in pixels
   @Input() sticky: boolean = true;
 
-  private startTimeSignal = signal<string>('08:00');
-  private endTimeSignal = signal<string>('18:00');
+  private startTimeSignal = signal<string>('1:00');
+  private endTimeSignal = signal<string>('24:00');
   private intervalSignal = signal<number>(15);
-  private rowHeightSignal = signal<number>(60);
 
   timeSlots = computed(() => this.generateTimeSlots());
 
@@ -41,7 +39,6 @@ export class TimeLabelComponent implements OnInit, OnChanges {
     this.startTimeSignal.set(this.startTime);
     this.endTimeSignal.set(this.endTime);
     this.intervalSignal.set(this.intervalMinutes);
-    this.rowHeightSignal.set(this.rowHeight);
   }
 
   private generateTimeSlots(): TimeSlot[] {
@@ -91,15 +88,8 @@ export class TimeLabelComponent implements OnInit, OnChanges {
     const hours24 = time.hours;
     const minutes = time.minutes;
 
-    // Convert to 12-hour format
-    const hours12 = hours24 === 0 ? 12 : hours24 > 12 ? hours24 - 12 : hours24;
-    const ampm = hours24 < 12 ? 'AM' : 'PM';
-
-    if (isHourMark) {
-      return `${hours12}:00 ${ampm}`;
-    } else {
-      return `${hours12}:${minutes.toString().padStart(2, '0')}`;
-    }
+    // Simple 24-hour format display
+    return `${hours24.toString().padStart(2, '0')}.${minutes.toString().padStart(2, '0')}`;
   }
 
   private isTimeBefore(time1: { hours: number; minutes: number }, time2: { hours: number; minutes: number }): boolean {
@@ -117,7 +107,7 @@ export class TimeLabelComponent implements OnInit, OnChanges {
    * Get the height for a time slot
    */
   getSlotHeight(): number {
-    return this.rowHeightSignal();
+    return 60; // Fixed height for simple flat boxes
   }
 
   /**

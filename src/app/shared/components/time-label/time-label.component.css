@@ -1,10 +1,11 @@
-/* Time Label Component Styles */
+/* Simple Time Label Component Styles */
 .time-label-container {
   min-width: 80px;
-  max-width: 120px;
-  width: 100px;
+  max-width: 100px;
+  width: 90px;
   position: relative;
   z-index: 10;
+  max-height: 100vh;
 }
 
 .time-label-container.sticky {
@@ -14,65 +15,35 @@
 }
 
 .time-slot {
-  position: relative;
+  min-height: 60px;
+  cursor: default;
 }
 
-.hour-mark {
-  padding-top: 0;
-  margin-top: -10px; /* Offset to align with grid */
-}
-
-.interval-mark {
-  padding-top: 0;
-  margin-top: -8px; /* Offset to align with grid */
-}
-
-/* Enhanced hour marks */
-.time-slot:has(.hour-mark) {
-  background-color: rgba(249, 250, 251, 0.8);
-}
-
-/* Hover effects */
 .time-slot:hover {
-  background-color: rgba(243, 244, 246, 0.5);
-}
-
-.time-slot:hover .hour-mark span,
-.time-slot:hover .interval-mark span {
-  color: #374151;
-  font-weight: 600;
+  background-color: rgba(243, 244, 246, 0.3);
 }
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .time-label-container {
     min-width: 60px;
-    max-width: 80px;
-    width: 70px;
+    max-width: 70px;
+    width: 65px;
   }
 
-  .hour-mark span {
+  .time-slot span {
     font-size: 0.75rem;
-  }
-
-  .interval-mark span {
-    font-size: 0.6875rem;
   }
 }
 
 @media (max-width: 480px) {
   .time-label-container {
     min-width: 50px;
-    max-width: 65px;
-    width: 60px;
+    max-width: 60px;
+    width: 55px;
   }
 
-  .time-slot {
-    padding-right: 0.5rem;
-  }
-
-  .hour-mark span,
-  .interval-mark span {
-    font-size: 0.625rem;
+  .time-slot span {
+    font-size: 0.6875rem;
   }
 }
