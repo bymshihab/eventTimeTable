@@ -1,0 +1,43 @@
+<div
+  class="time-label-container bg-white border-r border-gray-200"
+  [class.sticky]="sticky"
+  [style.height.px]="getTotalHeight()">
+
+  @for (slot of timeSlots(); track slot.time) {
+    <div
+      class="time-slot relative flex items-start justify-end pr-3 border-b border-gray-100"
+      [style.height.px]="getSlotHeight()"
+      [class]="slot.isHourMark ? 'border-b-gray-300' : 'border-b-gray-100'">
+
+      <!-- Hour mark with full time display -->
+      @if (slot.isHourMark) {
+        <div class="hour-mark flex flex-col items-end text-right">
+          <span class="text-sm font-semibold text-gray-800 leading-tight">
+            {{ slot.displayTime }}
+          </span>
+          <div class="w-3 h-px bg-gray-300 mt-1"></div>
+        </div>
+      } @else {
+        <!-- Quarter/interval marks -->
+        <div class="interval-mark flex flex-col items-end text-right">
+          <span class="text-xs text-gray-500 leading-tight">
+            {{ slot.displayTime }}
+          </span>
+          <div class="w-2 h-px bg-gray-200 mt-1"></div>
+        </div>
+      }
+
+      <!-- Time indicator line that extends to the right -->
+      <div
+        class="absolute top-0 right-0 w-px"
+        [class]="slot.isHourMark ? 'bg-gray-300' : 'bg-gray-100'"
+        [style.height.px]="getSlotHeight()">
+      </div>
+
+      <!-- Grid alignment helper for hour marks -->
+      @if (slot.isHourMark) {
+        <div class="absolute top-0 right-0 w-4 h-px bg-gray-300"></div>
+      }
+    </div>
+  }
+</div>

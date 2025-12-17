@@ -1,0 +1,120 @@
+<div class="scheduler-container h-screen flex flex-col bg-gray-50">
+
+  <!-- Tab Bar - Fixed at top -->
+  <div class="tab-bar-section bg-white shadow-sm z-20">
+    <app-tab-bar (daySelected)="onDaySelected($event)"></app-tab-bar>
+  </div>
+
+  <!-- Main Scheduler Grid -->
+  @if (selectedDay(); as day) {
+    <div class="scheduler-grid flex-1 flex overflow-hidden">
+
+      <!-- Time Label Column - Fixed Left -->
+      <div class="time-column bg-white border-r border-gray-200 z-10">
+        <div class="venue-header h-16 border-b border-gray-200 flex items-center justify-center bg-gray-50">
+          <span class="text-sm font-semibold text-gray-600">Time</span>
+        </div>
+        <div class="time-content overflow-y-auto">
+          <app-time-label
+            [startTime]="startTime"
+            [endTime]="endTime"
+            [intervalMinutes]="intervalMinutes"
+            [rowHeight]="rowHeight"
+            [sticky]="false">
+          </app-time-label>
+        </div>
+      </div>
+
+      <!-- Venues and Events Grid - Scrollable -->
+      <div class="venues-grid flex-1 overflow-auto">
+
+        <!-- Venue Headers - Fixed at top -->
+        <div class="venue-headers flex bg-white border-b border-gray-200 sticky top-0 z-5">
+          @for (venue of day.venues; track venue.id) {
+            <div class="venue-header-cell min-w-48 w-48 h-16 border-r border-gray-200 flex items-center justify-center bg-gray-50">
+              <div class="text-center">
+                <div class="text-sm font-semibold text-gray-800">{{ venue.name }}</div>
+                <div class="text-xs text-gray-500">{{ venue.events.length }} events</div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Events Grid -->
+        <div class="events-grid relative flex" [style.height.px]="totalHeight()">
+
+          <!-- Grid Background Lines -->
+          <div class="grid-lines absolute inset-0 pointer-events-none">
+            <!-- Vertical lines for venues -->
+            @for (venue of day.venues; track venue.id; let i = $index) {
+              <div
+                class="absolute top-0 bottom-0 w-px bg-gray-200"
+                [style.left.px]="(i + 1) * 192">
+              </div>
+            }
+
+            <!-- Horizontal lines for time intervals -->
+            @for (i of getGridLineCount(); track i) {
+              <div
+                class="absolute left-0 right-0 h-px border-t"
+                [class]="isHourLine(i) ? 'border-gray-300' : 'border-gray-100'"
+                [style.top.px]="i * rowHeight">
+              </div>
+            }
+          </div>
+
+          <!-- Event Columns -->
+          @for (venue of day.venues; track venue.id; let venueIndex = $index) {
+            <div class="venue-column relative min-w-48 w-48 border-r border-gray-200">
+
+              <!-- Events for this venue -->
+              @for (event of getEventsForVenue(venue.id); track event.id) {
+                <div
+                  class="event-block absolute left-1 right-1 rounded-md shadow-sm border-l-4 p-2 cursor-pointer transition-all duration-200 hover:shadow-md"
+                  [class]="getEventColor(event.id) + ' bg-opacity-90 hover:bg-opacity-100'"
+                  [style.top.px]="event.topPosition"
+                  [style.height.px]="event.height"
+                  [title]="event.title + ' (' + formatTime(event.startTime) + ', ' + event.durationMinutes + ' min)'">
+
+                  <div class="text-white">
+                    <div class="text-sm font-semibold truncate">{{ event.title }}</div>
+                    @if (event.height >= 40) {
+                      <div class="text-xs opacity-90 mt-1">
+                        {{ formatTime(event.startTime) }}
+                      </div>
+                    }
+                    @if (event.height >= 60) {
+                      <div class="text-xs opacity-75">
+                        {{ event.durationMinutes }}min
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    <!-- No Day Selected State -->
+    <div class="flex-1 flex items-center justify-center">
+      <div class="text-center">
+        @if (isLoading()) {
+          <div class="text-gray-500">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p>Loading scheduler...</p>
+          </div>
+        } @else {
+          <div class="text-gray-500">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <p class="text-lg font-medium">Select a day to view schedule</p>
+            <p class="text-sm">Choose a day from the tabs above</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

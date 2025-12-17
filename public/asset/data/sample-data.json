@@ -1,0 +1,164 @@
+{
+  "week": [
+    {
+      "day": "Monday",
+      "date": "2025-12-16",
+      "venues": [
+        {
+          "id": "venue-1",
+          "name": "Venue 1",
+          "events": [
+            { "id": "event-a", "title": "Event A", "startTime": "08:00", "durationMinutes": 45 },
+            { "id": "event-c", "title": "Event C", "startTime": "09:00", "durationMinutes": 30 }
+          ]
+        },
+        {
+          "id": "venue-2",
+          "name": "Venue 2",
+          "events": [
+            { "id": "event-d", "title": "Event D", "startTime": "09:00", "durationMinutes": 45 }
+          ]
+        },
+        {
+          "id": "venue-3",
+          "name": "Venue 3",
+          "events": [
+            { "id": "event-b", "title": "Event B", "startTime": "08:00", "durationMinutes": 30 }
+          ]
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "date": "2025-12-17",
+      "venues": [
+        {
+          "id": "venue-1",
+          "name": "Venue 1",
+          "events": [
+            { "id": "event-e", "title": "Event E", "startTime": "08:15", "durationMinutes": 30 }
+          ]
+        },
+        {
+          "id": "venue-2",
+          "name": "Venue 2",
+          "events": []
+        },
+        {
+          "id": "venue-3",
+          "name": "Venue 3",
+          "events": [
+            { "id": "event-f", "title": "Event F", "startTime": "09:00", "durationMinutes": 60 }
+          ]
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "date": "2025-12-18",
+      "venues": [
+        {
+          "id": "venue-1",
+          "name": "Venue 1",
+          "events": []
+        },
+        {
+          "id": "venue-2",
+          "name": "Venue 2",
+          "events": [
+            { "id": "event-g", "title": "Event G", "startTime": "08:30", "durationMinutes": 45 }
+          ]
+        },
+        {
+          "id": "venue-3",
+          "name": "Venue 3",
+          "events": []
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "date": "2025-12-19",
+      "venues": [
+        {
+          "id": "venue-1",
+          "name": "Venue 1",
+          "events": []
+        },
+        {
+          "id": "venue-2",
+          "name": "Venue 2",
+          "events": []
+        },
+        {
+          "id": "venue-3",
+          "name": "Venue 3",
+          "events": []
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "date": "2025-12-20",
+      "venues": [
+        {
+          "id": "venue-1",
+          "name": "Venue 1",
+          "events": []
+        },
+        {
+          "id": "venue-2",
+          "name": "Venue 2",
+          "events": []
+        },
+        {
+          "id": "venue-3",
+          "name": "Venue 3",
+          "events": []
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "date": "2025-12-21",
+      "venues": [
+        {
+          "id": "venue-1",
+          "name": "Venue 1",
+          "events": []
+        },
+        {
+          "id": "venue-2",
+          "name": "Venue 2",
+          "events": []
+        },
+        {
+          "id": "venue-3",
+          "name": "Venue 3",
+          "events": []
+        }
+      ]
+    },
+    {
+      "day": "Sunday",
+      "date": "2025-12-22",
+      "venues": [
+        {
+          "id": "venue-1",
+          "name": "Venue 1",
+          "events": []
+        },
+        {
+          "id": "venue-2",
+          "name": "Venue 2",
+          "events": []
+        },
+        {
+          "id": "venue-3",
+          "name": "Venue 3",
+          "events": []
+        }
+      ]
+    }
+  ]
+}

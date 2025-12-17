@@ -1,0 +1,38 @@
+<div class="w-full bg-white shadow-sm">
+  @if (isLoading()) {
+    <div class="opacity-60">
+      <mat-tab-group>
+        <mat-tab disabled>
+          <ng-template mat-tab-label>
+            <div class="px-4 py-2 text-gray-600 text-sm">Loading...</div>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  } @else {
+    <mat-tab-group
+      [selectedIndex]="selectedIndex()"
+      (selectedIndexChange)="onTabChange($event)"
+      mat-stretch-tabs="false"
+      animationDuration="300ms">
+
+      @for (day of days(); track day.day) {
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <div class="tab-content flex flex-col items-center justify-center px-2 py-2 min-h-12 text-center transition-all duration-300"
+                 [class]="isToday(day.date) ? 'bg-blue-50 rounded-md mx-1 text-blue-600' : 'text-gray-600'">
+              <div class="day-name text-xs font-medium tracking-wider uppercase leading-tight mb-0.5"
+                   [class]="isToday(day.date) ? 'text-blue-600' : 'text-gray-600'">
+                {{ getDayAbbreviation(day.day) }}
+              </div>
+              <div class="day-date text-sm font-semibold leading-tight"
+                   [class]="isToday(day.date) ? 'text-blue-600' : 'text-gray-800'">
+                {{ getFormattedDate(day.date) }}
+              </div>
+            </div>
+          </ng-template>
+        </mat-tab>
+      }
+    </mat-tab-group>
+  }
+</div>

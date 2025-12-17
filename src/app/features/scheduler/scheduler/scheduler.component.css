@@ -1,0 +1,124 @@
+/* Scheduler Component Styles */
+.scheduler-container {
+  position: relative;
+}
+
+.tab-bar-section {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.time-column {
+  width: 100px;
+  min-width: 100px;
+  position: sticky;
+  left: 0;
+  z-index: 15;
+}
+
+.venue-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.venues-grid {
+  position: relative;
+}
+
+.venue-headers {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.venue-header-cell {
+  position: sticky;
+  top: 0;
+  background: white;
+}
+
+.events-grid {
+  position: relative;
+}
+
+.venue-column {
+  position: relative;
+  background: white;
+}
+
+.event-block {
+  z-index: 1;
+  border-left-width: 4px;
+  transition: all 0.2s ease;
+}
+
+.event-block:hover {
+  z-index: 2;
+  transform: scale(1.02);
+}
+
+/* Grid line styles */
+.grid-lines {
+  z-index: 0;
+}
+
+/* Scrollbar styles */
+.venues-grid::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.venues-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.venues-grid::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.venues-grid::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .time-column {
+    width: 80px;
+    min-width: 80px;
+  }
+
+  .venue-header-cell {
+    min-width: 160px;
+    width: 160px;
+  }
+
+  .venue-column {
+    min-width: 160px;
+    width: 160px;
+  }
+}
+
+@media (max-width: 640px) {
+  .time-column {
+    width: 70px;
+    min-width: 70px;
+  }
+
+  .venue-header-cell {
+    min-width: 140px;
+    width: 140px;
+  }
+
+  .venue-column {
+    min-width: 140px;
+    width: 140px;
+  }
+
+  .event-block {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+}
