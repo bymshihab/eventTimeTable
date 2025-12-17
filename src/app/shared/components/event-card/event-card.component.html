@@ -1,1 +1,25 @@
-<p>event-card works!</p>
+<div
+  class="event-card"
+  [style.height.px]="eventHeight()">
+
+  <div class="event-content">
+    <!-- Event Title -->
+    <div class="event-title">
+      {{ title }}
+    </div>
+
+    <!-- Event Time (show if height allows) -->
+    @if (eventHeight() >= 40) {
+      <div class="event-time">
+        {{ formatTime(startTime) }}
+      </div>
+    }
+
+    <!-- Duration (show if height allows) -->
+    @if (eventHeight() >= 60) {
+      <div class="event-duration">
+        {{ getDurationText() }}
+      </div>
+    }
+  </div>
+</div>

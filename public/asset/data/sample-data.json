@@ -8,23 +8,30 @@
           "id": "venue-1",
           "name": "Venue 1",
           "events": [
-            { "id": "event-a", "title": "Event A", "startTime": "08:00", "durationMinutes": 45 },
-            { "id": "event-c", "title": "Event C", "startTime": "09:00", "durationMinutes": 30 }
+            {
+              "id": "event-a",
+              "title": "Event A",
+              "startTime": "10:00",
+              "durationMinutes": 90
+            }
           ]
         },
         {
           "id": "venue-2",
           "name": "Venue 2",
           "events": [
-            { "id": "event-d", "title": "Event D", "startTime": "09:00", "durationMinutes": 45 }
+            {
+              "id": "event-a",
+              "title": "Event A",
+              "startTime": "10:00",
+              "durationMinutes": 90
+            }
           ]
         },
         {
           "id": "venue-3",
           "name": "Venue 3",
-          "events": [
-            { "id": "event-b", "title": "Event B", "startTime": "08:00", "durationMinutes": 30 }
-          ]
+          "events": []
         }
       ]
     },

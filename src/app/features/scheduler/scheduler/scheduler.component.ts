@@ -1,7 +1,9 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TabBarComponent } from '../../../shared/components/tab-bar/tab-bar.component';
 import { TimeLabelComponent } from '../../../shared/components/time-label/time-label.component';
+import { EventCardComponent } from '../../../shared/components/event-card/event-card.component';
+import { VenueCardComponent } from '../../../shared/components/venue-card/venue-card.component';
 import { EventService } from '../../../core/services/event.service';
 import { VenueService } from '../../../core/services/venue.service';
 import { LocalStorageService } from '../../../core/services/local-storage.service';
@@ -19,17 +21,20 @@ export interface SchedulerEvent extends Event {
 @Component({
   selector: 'app-scheduler',
   standalone: true,
-  imports: [CommonModule, TabBarComponent, TimeLabelComponent],
+  imports: [CommonModule, TabBarComponent, TimeLabelComponent, EventCardComponent, VenueCardComponent],
   templateUrl: './scheduler.component.html',
   styleUrl: './scheduler.component.css'
 })
-export class SchedulerComponent implements OnInit {
+export class SchedulerComponent implements OnInit, AfterViewInit {
+  @ViewChild('timeContainer', { static: false }) timeContainer!: ElementRef;
+  @ViewChild('eventGrid', { static: false }) eventGrid!: ElementRef;
+  @ViewChild('venuesContainer', { static: false }) venuesContainer!: ElementRef;
   private eventService = inject(EventService);
   private venueService = inject(VenueService);
   private localStorageService = inject(LocalStorageService);
 
   // Configuration
-  readonly startTime = '08:00';
+  readonly startTime = '1:00';
   readonly endTime = '24:00';
   readonly intervalMinutes = 15;
   readonly rowHeight = 60;
@@ -39,6 +44,8 @@ export class SchedulerComponent implements OnInit {
   venues = signal<Venue[]>([]);
   schedulerEvents = signal<SchedulerEvent[]>([]);
   isLoading = signal<boolean>(true);
+  isScrolling = signal<boolean>(false);
+  showScrollIndicators = signal<boolean>(false);
 
   // Computed values
   totalMinutes = computed(() => this.calculateTotalMinutes());
@@ -48,18 +55,89 @@ export class SchedulerComponent implements OnInit {
     this.loadInitialData();
   }
 
+  ngAfterViewInit() {
+    this.setupScrollSync();
+  }
+
+  /**
+   * Synchronize vertical scrolling between time labels and event grid
+   */
+  private setupScrollSync() {
+    if (this.timeContainer && this.eventGrid && this.venuesContainer) {
+      const timeElement = this.timeContainer.nativeElement;
+      const gridElement = this.eventGrid.nativeElement;
+      const venuesElement = this.venuesContainer.nativeElement;
+
+      let isScrollingSynced = false;
+      let scrollTimeout: any;
+
+      // Show scroll indicators during scroll
+      const showScrollIndicators = () => {
+        this.isScrolling.set(true);
+        this.showScrollIndicators.set(true);
+
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          this.isScrolling.set(false);
+          this.showScrollIndicators.set(false);
+        }, 1500);
+      };
+
+      // Sync vertical scroll from event grid to time labels
+      gridElement.addEventListener('scroll', () => {
+        if (!isScrollingSynced) {
+          isScrollingSynced = true;
+          timeElement.scrollTop = gridElement.scrollTop;
+          showScrollIndicators();
+          requestAnimationFrame(() => {
+            isScrollingSynced = false;
+          });
+        }
+      });
+
+      // Sync vertical scroll from time labels to event grid
+      timeElement.addEventListener('scroll', () => {
+        if (!isScrollingSynced) {
+          isScrollingSynced = true;
+          gridElement.scrollTop = timeElement.scrollTop;
+          showScrollIndicators();
+          requestAnimationFrame(() => {
+            isScrollingSynced = false;
+          });
+        }
+      });
+
+      // Show horizontal scroll indicators for venues
+      venuesElement.addEventListener('scroll', () => {
+        showScrollIndicators();
+      });
+
+      // Add scroll event for both containers
+      gridElement.addEventListener('scroll', showScrollIndicators);
+      timeElement.addEventListener('scroll', showScrollIndicators);
+    }
+  }
+
   private loadInitialData() {
     // Load saved selected day
     const savedDay = this.localStorageService.loadSelectedDay();
 
-    // Load all venues first
-    this.venueService.getAllVenues().subscribe({
-      next: (venues) => {
-        this.venues.set(venues);
+    // Load all days first
+    this.eventService.getAllDays().subscribe({
+      next: (days) => {
+        if (days.length > 0) {
+          // Set default day or saved day
+          let dayToSelect = days[0];
+          if (savedDay) {
+            const foundDay = days.find(d => d.day.toLowerCase() === savedDay.toLowerCase());
+            if (foundDay) dayToSelect = foundDay;
+          }
+          this.onDaySelected(dayToSelect);
+        }
         this.isLoading.set(false);
       },
       error: (error) => {
-        console.error('Error loading venues:', error);
+        console.error('Error loading days:', error);
         this.isLoading.set(false);
       }
     });
@@ -68,6 +146,8 @@ export class SchedulerComponent implements OnInit {
   onDaySelected(day: Day) {
     this.selectedDay.set(day);
     this.loadDaySchedule(day);
+    // Persist selected day to localStorage
+    this.localStorageService.saveSelectedDay(day.day);
   }
 
   private loadDaySchedule(day: Day) {

@@ -1,124 +1,419 @@
-/* Scheduler Component Styles */
+/* Enhanced Scheduler Component with CSS Grid */
 .scheduler-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tab Bar */
+.tab-bar-section {
+  flex-shrink: 0;
+  z-index: 20;
   position: relative;
 }
 
-.tab-bar-section {
-  position: sticky;
-  top: 0;
-  z-index: 20;
+/* Scroll Indicators */
+.scroll-indicators {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  z-index: 30;
+  pointer-events: none;
 }
 
+.scroll-indicator {
+  width: 4px;
+  height: 80px;
+  background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
+  border-radius: 2px;
+  margin: 5px 0;
+  opacity: 0.7;
+  animation: pulse-indicator 1.5s ease-in-out infinite;
+}
+
+.horizontal-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 50%;
+  transform: translateX(50%) rotate(90deg);
+  width: 4px;
+  height: 60px;
+}
+
+@keyframes pulse-indicator {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* Main Grid Layout using CSS Grid */
+.scheduler-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "time-header venues-header"
+    "time-content venues-content";
+  overflow: hidden;
+  height: calc(100vh - 64px);
+}
+
+/* Time Column - CSS Grid Area */
 .time-column {
-  width: 100px;
-  min-width: 100px;
-  position: sticky;
-  left: 0;
+  grid-area: time-header / time-header / time-content / time-content;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: 90px;
+  min-width: 90px;
+  max-width: 90px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
   z-index: 15;
 }
 
-.venue-header {
+.time-header {
+  grid-row: 1;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
-.venues-grid {
-  position: relative;
+.time-header-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
 }
 
-.venue-headers {
+.time-content {
+  grid-row: 2;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+/* Venues Section - CSS Grid Area */
+.venues-section {
+  grid-area: venues-header / venues-header / venues-content / venues-content;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}
+
+.venue-headers-container {
+  grid-row: 1;
+  height: 80px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  overflow-x: auto;
+  overflow-y: hidden;
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: 10;
 }
 
-.venue-header-cell {
-  position: sticky;
-  top: 0;
-  background: white;
+.venue-headers-scroll {
+  display: flex;
+  height: 100%;
+  min-width: max-content;
 }
 
-.events-grid {
+.venue-header-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+/* Events Grid Container */
+.events-grid-container {
+  grid-row: 2;
+  overflow: auto;
   position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
-.venue-column {
+.events-grid-content {
   position: relative;
-  background: white;
+  min-width: max-content;
+  display: flex;
+  flex-direction: column;
 }
 
-.event-block {
-  z-index: 1;
-  border-left-width: 4px;
-  transition: all 0.2s ease;
-}
-
-.event-block:hover {
-  z-index: 2;
-  transform: scale(1.02);
-}
-
-/* Grid line styles */
+/* Grid Lines */
 .grid-lines {
-  z-index: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* Scrollbar styles */
-.venues-grid::-webkit-scrollbar {
+.grid-line-vertical {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: #e5e7eb;
+}
+
+.grid-line-horizontal {
+  position: absolute;
+  left: 0;
+  height: 1px;
+  background-color: #f3f4f6;
+}
+
+.grid-line-horizontal.hour-line {
+  background-color: #d1d5db;
+  height: 2px;
+}
+
+.grid-line-horizontal.interval-line {
+  background-color: #f3f4f6;
+}
+
+/* Venues Container */
+.venues-container {
+  display: flex;
+  position: relative;
+  z-index: 2;
+}
+
+.venue-events-column {
+  position: relative;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+/* Event Wrapper */
+.event-wrapper {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  z-index: 10;
+}
+
+/* Loading and Empty States */
+.loading-state,
+.empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.loading-content,
+.loading-spinner-container,
+.empty-state {
+  text-align: center;
+  color: #6b7280;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+.loading-text-primary {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.loading-text-secondary {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  color: #d1d5db;
+}
+
+.empty-state-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.empty-state-subtitle {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+/* Scrollbar Styling */
+.time-content::-webkit-scrollbar,
+.venue-headers-container::-webkit-scrollbar,
+.events-grid-container::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-.venues-grid::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.venues-grid::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+.time-content::-webkit-scrollbar-track,
+.venue-headers-container::-webkit-scrollbar-track,
+.events-grid-container::-webkit-scrollbar-track {
+  background: #f8fafc;
   border-radius: 4px;
 }
 
-.venues-grid::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+.time-content::-webkit-scrollbar-thumb,
+.venue-headers-container::-webkit-scrollbar-thumb,
+.events-grid-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
-/* Responsive adjustments */
+.time-content::-webkit-scrollbar-thumb:hover,
+.venue-headers-container::-webkit-scrollbar-thumb:hover,
+.events-grid-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Scrolling State */
+.scheduler-container.scrolling .scroll-indicators {
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .venue-events-column {
+    width: 180px !important;
+    min-width: 180px !important;
+  }
+}
+
 @media (max-width: 768px) {
   .time-column {
-    width: 80px;
-    min-width: 80px;
+    width: 70px;
+    min-width: 70px;
+    max-width: 70px;
   }
 
-  .venue-header-cell {
-    min-width: 160px;
-    width: 160px;
+  .time-header {
+    height: 60px;
   }
 
-  .venue-column {
-    min-width: 160px;
-    width: 160px;
+  .venue-headers-container {
+    height: 60px;
+  }
+
+  .venue-events-column {
+    width: 160px !important;
+    min-width: 160px !important;
+  }
+
+  .venue-header-wrapper {
+    padding: 4px;
+  }
+
+  .scroll-indicators {
+    right: 10px;
+  }
+
+  .scroll-indicator {
+    width: 3px;
+    height: 60px;
   }
 }
 
 @media (max-width: 640px) {
   .time-column {
-    width: 70px;
-    min-width: 70px;
+    width: 60px;
+    min-width: 60px;
+    max-width: 60px;
   }
 
-  .venue-header-cell {
-    min-width: 140px;
-    width: 140px;
+  .venue-events-column {
+    width: 140px !important;
+    min-width: 140px !important;
   }
 
-  .venue-column {
-    min-width: 140px;
-    width: 140px;
-  }
-
-  .event-block {
+  .time-header-text {
     font-size: 0.75rem;
-    padding: 0.5rem;
+  }
+
+  .scheduler-grid {
+    height: calc(100vh - 56px);
+  }
+}
+
+@media (max-width: 480px) {
+  .venue-events-column {
+    width: 120px !important;
+    min-width: 120px !important;
+  }
+
+  .event-wrapper {
+    left: 2px;
+    right: 2px;
+  }
+}
+
+/* Animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Smooth Transitions */
+.scheduler-container *:not(.loading-spinner) {
+  transition: all 0.15s ease;
+}
+
+/* Focus and Accessibility */
+.scheduler-container:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .grid-line-vertical,
+  .grid-line-horizontal {
+    background-color: #000;
+  }
+
+  .time-column,
+  .venue-headers-container {
+    border-color: #000;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .scheduler-container * {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .loading-spinner {
+    animation: none;
+    border-top-color: #3b82f6;
   }
 }
