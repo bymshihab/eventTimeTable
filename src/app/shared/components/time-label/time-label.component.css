@@ -5,7 +5,11 @@
   width: 90px;
   position: relative;
   z-index: 10;
-  max-height: 100vh;
+  /* Ensure perfect alignment - no height constraints */
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 .time-label-container.sticky {
@@ -15,8 +19,12 @@
 }
 
 .time-slot {
-  min-height: 60px;
+  height: 60px; /* Use exact height, not min-height */
   cursor: default;
+  /* Ensure perfect alignment */
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .time-slot:hover {

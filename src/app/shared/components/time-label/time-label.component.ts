@@ -19,11 +19,13 @@ export class TimeLabelComponent implements OnInit, OnChanges {
   @Input() startTime: string = '1:00';
   @Input() endTime: string = '24:00';
   @Input() intervalMinutes: number = 15;
+  @Input() rowHeight: number = 60;
   @Input() sticky: boolean = true;
 
   private startTimeSignal = signal<string>('1:00');
   private endTimeSignal = signal<string>('24:00');
   private intervalSignal = signal<number>(15);
+  private rowHeightSignal = signal<number>(60);
 
   timeSlots = computed(() => this.generateTimeSlots());
 
@@ -39,6 +41,7 @@ export class TimeLabelComponent implements OnInit, OnChanges {
     this.startTimeSignal.set(this.startTime);
     this.endTimeSignal.set(this.endTime);
     this.intervalSignal.set(this.intervalMinutes);
+    this.rowHeightSignal.set(this.rowHeight);
   }
 
   private generateTimeSlots(): TimeSlot[] {
@@ -107,7 +110,7 @@ export class TimeLabelComponent implements OnInit, OnChanges {
    * Get the height for a time slot
    */
   getSlotHeight(): number {
-    return 60; // Fixed height for simple flat boxes
+    return this.rowHeightSignal(); // Use the passed rowHeight from parent
   }
 
   /**
@@ -126,7 +129,8 @@ export class TimeLabelComponent implements OnInit, OnChanges {
     const interval = this.intervalSignal();
 
     const diffMinutes = (targetTime.hours - startTime.hours) * 60 + (targetTime.minutes - startTime.minutes);
-    const slotIndex = Math.floor(diffMinutes / interval);
+    // Use Math.round for perfect alignment, same as event positioning
+    const slotIndex = Math.round(diffMinutes / interval);
 
     return slotIndex * this.getSlotHeight();
   }

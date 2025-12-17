@@ -95,10 +95,14 @@
 
 .time-content {
   grid-row: 2;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
+  overflow: hidden;
+  /* Ensure perfect alignment with events */
+  padding: 0;
+  margin: 0;
+  /* Disabled smooth scrolling for perfect sync */
+  scroll-behavior: auto;
+  /* Let the parent handle scrolling via JavaScript */
+  position: relative;
 }
 
 /* Venues Section - CSS Grid Area */
@@ -119,6 +123,8 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  /* Disabled smooth scrolling for perfect sync */
+  scroll-behavior: auto;
 }
 
 .venue-headers-scroll {
@@ -144,6 +150,11 @@
   position: relative;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 #f1f5f9;
+  /* Ensure perfect alignment with time labels */
+  padding: 0;
+  margin: 0;
+  /* Disabled smooth scrolling for perfect sync */
+  scroll-behavior: auto;
 }
 
 .events-grid-content {
@@ -212,6 +223,8 @@
   left: 4px;
   right: 4px;
   z-index: 10;
+  /* Ensure perfect alignment with time slots */
+  box-sizing: border-box;
 }
 
 /* Loading and Empty States */

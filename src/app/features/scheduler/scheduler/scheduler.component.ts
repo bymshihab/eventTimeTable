@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TabBarComponent } from '../../../shared/components/tab-bar/tab-bar.component';
 import { TimeLabelComponent } from '../../../shared/components/time-label/time-label.component';
@@ -25,13 +25,14 @@ export interface SchedulerEvent extends Event {
   templateUrl: './scheduler.component.html',
   styleUrl: './scheduler.component.css'
 })
-export class SchedulerComponent implements OnInit, AfterViewInit {
+export class SchedulerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('timeContainer', { static: false }) timeContainer!: ElementRef;
   @ViewChild('eventGrid', { static: false }) eventGrid!: ElementRef;
   @ViewChild('venuesContainer', { static: false }) venuesContainer!: ElementRef;
   private eventService = inject(EventService);
   private venueService = inject(VenueService);
   private localStorageService = inject(LocalStorageService);
+  private alignmentCheckInterval?: any;
 
   // Configuration
   readonly startTime = '1:00';
@@ -56,7 +57,16 @@ export class SchedulerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.setupScrollSync();
+    // Delay to ensure all child components are fully rendered
+    setTimeout(() => {
+      this.setupScrollSync();
+    }, 50);
+  }
+
+  ngOnDestroy() {
+    if (this.alignmentCheckInterval) {
+      clearInterval(this.alignmentCheckInterval);
+    }
   }
 
   /**
@@ -68,7 +78,23 @@ export class SchedulerComponent implements OnInit, AfterViewInit {
       const gridElement = this.eventGrid.nativeElement;
       const venuesElement = this.venuesContainer.nativeElement;
 
-      let isScrollingSynced = false;
+      // Clear any existing alignment check interval
+      if (this.alignmentCheckInterval) {
+        clearInterval(this.alignmentCheckInterval);
+      }
+
+      // Remove smooth scrolling to prevent sync issues
+      timeElement.style.scrollBehavior = 'auto';
+      gridElement.style.scrollBehavior = 'auto';
+      venuesElement.style.scrollBehavior = 'auto';
+
+      // Ensure the time container doesn't have its own scroll
+      timeElement.style.overflow = 'visible';
+      timeElement.style.height = 'auto';
+
+      // Flags to prevent infinite loop during sync
+      let isSyncingVertical = false;
+      let isSyncingHorizontal = false;
       let scrollTimeout: any;
 
       // Show scroll indicators during scroll
@@ -83,38 +109,92 @@ export class SchedulerComponent implements OnInit, AfterViewInit {
         }, 1500);
       };
 
-      // Sync vertical scroll from event grid to time labels
+      // Improved sync function for vertical scrolling
+      // Use transform to sync time labels with grid scroll
+      const syncTimeLabels = (scrollTop: number) => {
+        if (!isSyncingVertical) {
+          isSyncingVertical = true;
+
+          // Find the time-label container inside timeElement and transform it
+          const timeLabelContainer = timeElement.querySelector('.time-label-container') as HTMLElement;
+          if (timeLabelContainer) {
+            timeLabelContainer.style.transform = `translateY(-${scrollTop}px)`;
+          }
+
+          showScrollIndicators();
+
+          setTimeout(() => {
+            isSyncingVertical = false;
+          }, 0);
+        }
+      };
+
+      // Improved sync function for horizontal scrolling
+      const syncHorizontal = (sourceElement: HTMLElement, targetElement: HTMLElement) => {
+        if (!isSyncingHorizontal) {
+          isSyncingHorizontal = true;
+
+          // Direct assignment for instant sync
+          targetElement.scrollLeft = sourceElement.scrollLeft;
+
+          showScrollIndicators();
+
+          // Reset flag after the sync is complete
+          setTimeout(() => {
+            isSyncingHorizontal = false;
+          }, 0);
+        }
+      };
+
+      // Event listeners for scroll synchronization
+      // Handle both vertical and horizontal sync from the main grid element
       gridElement.addEventListener('scroll', () => {
-        if (!isScrollingSynced) {
-          isScrollingSynced = true;
-          timeElement.scrollTop = gridElement.scrollTop;
-          showScrollIndicators();
-          requestAnimationFrame(() => {
-            isScrollingSynced = false;
-          });
-        }
-      });
+        // Sync vertical scroll with time column using transform
+        syncTimeLabels(gridElement.scrollTop);
+        // Sync horizontal scroll with venues header
+        syncHorizontal(gridElement, venuesElement);
+      }, { passive: true });
 
-      // Sync vertical scroll from time labels to event grid
-      timeElement.addEventListener('scroll', () => {
-        if (!isScrollingSynced) {
-          isScrollingSynced = true;
-          gridElement.scrollTop = timeElement.scrollTop;
-          showScrollIndicators();
-          requestAnimationFrame(() => {
-            isScrollingSynced = false;
-          });
-        }
-      });
-
-      // Show horizontal scroll indicators for venues
+      // Handle horizontal sync from venues header to grid
       venuesElement.addEventListener('scroll', () => {
-        showScrollIndicators();
-      });
+        syncHorizontal(venuesElement, gridElement);
+      }, { passive: true });
 
-      // Add scroll event for both containers
-      gridElement.addEventListener('scroll', showScrollIndicators);
-      timeElement.addEventListener('scroll', showScrollIndicators);
+      // Initialize scroll positions
+      setTimeout(() => {
+        // Initialize time labels position
+        const timeLabelContainer = timeElement.querySelector('.time-label-container') as HTMLElement;
+        if (timeLabelContainer) {
+          timeLabelContainer.style.transform = `translateY(-${gridElement.scrollTop}px)`;
+        }
+
+        // Initialize venues header position
+        if (gridElement.scrollLeft !== venuesElement.scrollLeft) {
+          venuesElement.scrollLeft = gridElement.scrollLeft;
+        }
+      }, 100);
+
+      // Backup alignment check
+      this.alignmentCheckInterval = setInterval(() => {
+        if (!this.isScrolling()) {
+          // Check and correct vertical alignment using transform
+          if (!isSyncingVertical) {
+            const timeLabelContainer = timeElement.querySelector('.time-label-container') as HTMLElement;
+            if (timeLabelContainer) {
+              const currentTransform = timeLabelContainer.style.transform;
+              const expectedTransform = `translateY(-${gridElement.scrollTop}px)`;
+              if (currentTransform !== expectedTransform) {
+                timeLabelContainer.style.transform = expectedTransform;
+              }
+            }
+          }
+
+          // Check and correct horizontal alignment
+          if (!isSyncingHorizontal && Math.abs(venuesElement.scrollLeft - gridElement.scrollLeft) > 2) {
+            venuesElement.scrollLeft = gridElement.scrollLeft;
+          }
+        }
+      }, 200);
     }
   }
 
@@ -148,6 +228,11 @@ export class SchedulerComponent implements OnInit, AfterViewInit {
     this.loadDaySchedule(day);
     // Persist selected day to localStorage
     this.localStorageService.saveSelectedDay(day.day);
+
+    // Re-establish scroll sync after day change
+    setTimeout(() => {
+      this.setupScrollSync();
+    }, 100);
   }
 
   private loadDaySchedule(day: Day) {
@@ -195,7 +280,9 @@ export class SchedulerComponent implements OnInit, AfterViewInit {
   private calculateEventPosition(startMinutes: number): number {
     const baseStartMinutes = this.timeToMinutes(this.startTime);
     const relativeMinutes = startMinutes - baseStartMinutes;
-    return (relativeMinutes / this.intervalMinutes) * this.rowHeight;
+    // Ensure perfect alignment with time slots - snap to nearest interval
+    const slotIndex = Math.round(relativeMinutes / this.intervalMinutes);
+    return slotIndex * this.rowHeight;
   }
 
   private calculateEventHeight(durationMinutes: number): number {
